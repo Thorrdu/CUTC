@@ -1,6 +1,6 @@
 # 🚀 Cursor Unlimited Tool Calls (CUTC)
 
-**CUTC** is an ultra-simplified rules system designed for **Cursor IDE**, **Windsurf**, or any other agent-based coding assistant that supports tool calls. It helps you get the **maximum value from your monthly tool call allowance** by running your tasks in a loop with user input—without restarting the chat every time.
+**CUTC** is an ultra-minimalist tool designed for **Cursor IDE**, **Windsurf**, or any other agent-based coding assistant that supports tool calls. It helps you get the **maximum value from your monthly tool call allowance** by running your tasks in a loop with user input—without restarting the chat every time.
 
 > **Important Note:** This only works with **Agent Mode**
 
@@ -14,10 +14,11 @@ This project is an improved fork of the original [10x-Tool-Calls](https://github
 
 ### 🎯 What we've improved:
 
-- **Ultra-simplified installation**: One Python script does everything
-- **Optimized file structure**: No more navigating through folders
-- **Automatic installation**: No more manual manipulations
-- **Better documentation**: Clearer instructions and troubleshooting
+- **Ultra-minimalist design**: Only 2 files in the entire project
+- **Self-destructing installer**: Keeps your project clean after installation
+- **Zero configuration**: One command does everything
+- **Enhanced error handling**: Smart troubleshooting and recovery
+- **Cross-platform support**: Works on Windows, Mac, and Linux
 
 ---
 
@@ -51,41 +52,54 @@ With **CUTC**:
 
 ## ⚙️ Ultra-Simple Installation
 
-### Option 1: Automatic Installation (Recommended)
-
-1. **Download** or clone this repository into your project
-2. **Run** the installation script:
+### One Command Installation
 
 ```bash
 python install.py
 ```
 
-3. **Restart** Cursor IDE
-4. **Verify** that CUTC rules are active in settings
+**That's literally it!** 🎉
 
-That's it! 🎉
+The installer:
+- ✅ Contains all necessary files embedded within itself
+- ✅ Creates the proper `.cursor/rules/` structure
+- ✅ Installs `userinput.py` at your project root
+- ✅ Installs CUTC rules for Cursor IDE
+- ✅ Self-destructs after successful installation
+- ✅ Provides clear success/error messages
+- ✅ Includes comprehensive troubleshooting
 
-### Option 2: Manual Installation
+### Advanced Options
 
-If you prefer to control each step:
+```bash
+# Keep installer for debugging
+python install.py --keep-installer
 
-1. **Copy** `cutc_rules.mdc` to `.cursor/rules/` in your project
-2. **Copy** `userinput.py` to your project root
-3. **Restart** Cursor IDE
+# Get help
+python install.py --help
+```
 
 ---
 
-## 🧪 Current Version
+## 🧪 Project Structure
 
-- ✅ **Supports:** text input only
-- ✅ **Automatic installation** with Python script
-- ✅ **Simplified structure** for rapid adoption
-- ❌ **Not yet supported:** image upload or file drops (coming soon!)
+This is the **most minimalist** CUTC distribution possible:
 
-A more advanced version is planned that will support:
-- Image uploads
-- File drops
-- GUI installation interface
+```
+CUTC/
+├── install.py          # 🚀 Self-destructing installer (contains everything)
+└── README.md          # 📖 This documentation
+```
+
+After installation, your project will have:
+```
+your-project/
+├── .cursor/
+│   └── rules/
+│       └── cutc_rules.mdc     # 🤖 CUTC rules for Cursor
+├── userinput.py               # 📝 User input script
+└── [your existing files...]
+```
 
 ---
 
@@ -116,14 +130,14 @@ You have **500 monthly requests** and each request allows up to **25 tool calls*
 
 ## 🔧 Troubleshooting
 
-**Problem:** Rules don't apply
-**Solution:** Check that the `.mdc` file is in `.cursor/rules/` and restart Cursor
+The installer includes built-in troubleshooting, but here are common solutions:
 
-**Problem:** Python script doesn't run
-**Solution:** Verify that `userinput.py` is at the project root
-
-**Problem:** Terminal doesn't open in chat
-**Solution:** Make sure you're in Agent Mode in Cursor
+| Problem | Solution |
+|---------|----------|
+| **Rules don't apply** | Restart Cursor IDE and check `.cursor/rules/` exists |
+| **Permission denied** | Run as administrator (Windows) or with `sudo` (Linux/Mac) |
+| **Python not found** | Install Python 3.6+ from [python.org](https://python.org) |
+| **No terminal in chat** | Make sure you're in **Agent Mode** in Cursor |
 
 ---
 
@@ -132,8 +146,8 @@ You have **500 monthly requests** and each request allows up to **25 tool calls*
 ### CUTC Support
 If you find CUTC useful, you can support the development:
 - ☕ [Buy Thorrdu a coffee](https://ko-fi.com/thorrdu)
-- 🐛 [Report bugs](https://github.com/Thorrdu/cursor-10x-Tool-Calls/issues)
-- 💡 [Suggest improvements](https://github.com/Thorrdu/cursor-10x-Tool-Calls/discussions)
+- 🐛 [Report bugs](https://github.com/Thorrdu/CUTC/issues)
+- 💡 [Suggest improvements](https://github.com/Thorrdu/CUTC/discussions)
 
 ### Original Support
 Special thanks to [@perrypixel](https://github.com/perrypixel) for the original project:
@@ -148,6 +162,27 @@ Contributions are welcome! Feel free to:
 
 ---
 
+## 🎯 Usage Tips
+
+1. **Start with Agent Mode**: Make sure Cursor is in Agent Mode
+2. **Let it finish**: Allow the AI to complete each task fully
+3. **Use the prompt**: When you see `prompt:`, type your next instruction
+4. **Chain commands**: Keep adding tasks to maximize your tool calls
+5. **Type 'stop'**: End the loop when you're done
+
+---
+
 ## 📄 License
 
 This project inherits the license from the original project. See the original repository for more details.
+
+---
+
+## 🌟 Why CUTC is Better
+
+- **🚀 Fastest setup**: One command, zero configuration
+- **🗑️ Self-cleaning**: No leftover installation files
+- **🛡️ Error-proof**: Smart error handling and recovery
+- **📦 Minimal footprint**: Just 2 files total
+- **🔄 Always updated**: Embedded files ensure consistency
+- **🌍 Cross-platform**: Works everywhere Python does
