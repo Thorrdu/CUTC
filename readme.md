@@ -22,6 +22,13 @@ This project is an improved fork of the original [10x-Tool-Calls](https://github
 - **Enhanced error handling**: Smart troubleshooting and recovery
 - **Cross-platform support**: Works on Windows, Mac, and Linux
 
+### ✨ New Features: Image and File Context
+
+CUTC now supports providing images and files as direct context in your prompts.
+
+- **🖼️ Image Context**: Provide a path to an image (`.png`, `.jpg`, etc.), and the agent will "see" it.
+- **📄 File Context**: Provide a path to a text file, and the agent will read its content.
+
 ---
 
 ## ✅ What CUTC Does
@@ -29,10 +36,10 @@ This project is an improved fork of the original [10x-Tool-Calls](https://github
 - After the AI completes a task, it runs a small Python script that asks:
 
 ```
-prompt: 
+prompt (or file path): 
 ```
 
-- You type your next instruction (e.g., `"add comments"`, `"refactor this"`, etc.)
+- You can type your next instruction, or provide a path to an image or text file.
 - The AI uses that input to continue working
 - This loop repeats until:
   - You manually stop it, or
@@ -218,14 +225,18 @@ Contributions are welcome! Feel free to:
 ### For Cursor IDE:
 1. **Start with Agent Mode**: Make sure Cursor is in Agent Mode
 2. **Let it finish**: Allow the AI to complete each task fully
-3. **Use the prompt**: When you see `prompt:`, type your next instruction
+3. **Use the prompt**: When you see `prompt (or file path):`, you can:
+    - Type your next instruction (e.g., `"add comments"`)
+    - Drag and drop a file into the terminal to paste its path.
 4. **Chain commands**: Keep adding tasks to maximize your tool calls
 5. **Type 'stop'**: End the loop when you're done
 
 ### For Windsurf IDE:
 1. **Start with Cascade Mode**: Make sure Windsurf is in Cascade Mode
 2. **Let it finish**: Allow Cascade to complete each task fully
-3. **Use the prompt**: When you see `prompt:`, type your next instruction
+3. **Use the prompt**: When you see `prompt (or file path):`, you can:
+    - Type your next instruction (e.g., `"refactor this"`)
+    - Drag and drop a file into the terminal to paste its path.
 4. **Chain commands**: Keep adding tasks to maximize your tool calls
 5. **Type 'stop'**: End the loop when you're done
 
@@ -240,6 +251,7 @@ This project inherits the license from the original project. See the original re
 ## 🌟 Why CUTC is Better
 
 - **🚀 Fastest setup**: One command, zero configuration
+- **🖼️ Image & File Context**: Provide images and files as context
 - **🎯 Dual IDE support**: Works with Cursor AND Windsurf
 - **🔍 Smart detection**: Auto-detects your IDE setup
 - **🗑️ Self-cleaning**: No leftover installation files

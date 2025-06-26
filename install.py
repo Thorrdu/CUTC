@@ -18,81 +18,121 @@ from pathlib import Path
 import argparse
 
 # Embedded file contents
-USERINPUT_CONTENT = '''user_input = input("prompt: ")'''
+USERINPUT_CONTENT = '''
+import os
+import base64
+from pathlib import Path
+
+# Define supported image and text extensions
+IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']
+TEXT_EXTENSIONS = ['.txt', '.py', '.js', '.ts', '.md', '.html', '.css', '.json', '.xml', '.yaml', '.yml']
+
+def is_image_file(path):
+    return path.suffix.lower() in IMAGE_EXTENSIONS
+
+def is_text_file(path):
+    return path.suffix.lower() in TEXT_EXTENSIONS
+
+def process_input(user_input):
+    """Processes user input, handling file paths for images and text."""
+    try:
+        input_path = Path(user_input)
+        if input_path.is_file():
+            if is_image_file(input_path):
+                # It's an image, encode it in base64
+                with open(input_path, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                print(f"IMAGE_CONTEXT_START:{input_path.name}::{encoded_string}:IMAGE_CONTEXT_END")
+            elif is_text_file(input_path):
+                # It's a text file, print its content
+                with open(input_path, "r", encoding='utf-8', errors='ignore') as text_file:
+                    content = text_file.read()
+                print(f"FILE_CONTEXT_START:{input_path.name}::{content}:FILE_CONTEXT_END")
+            else:
+                # It's another type of file, treat as a text prompt
+                print(user_input)
+        else:
+            # It's not a valid file path, treat as a text prompt
+            print(user_input)
+    except Exception:
+        # Handle cases where input is not a valid path at all
+        print(user_input)
+
+if __name__ == "__main__":
+    prompt_text = input("prompt (or file path): ")
+    if prompt_text.lower() == 'stop':
+        print("stop")
+    else:
+        process_input(prompt_text)
+'''
 
 # Cursor-specific rules content
 CURSOR_RULES_CONTENT = '''---
-description: Cursor Unlimited Tool Calls (CUTC) - Maximize your tool calls
+description: "CUTC - Enhanced with Image and File Context"
 globs: 
 alwaysApply: true
 ---
 
-### ✅ Task: Interactive Task Loop with User Feedback
+### ✅ Task: Interactive Task Loop with Enhanced Context
 
-1. **Check if `userinput.py` exists** in the root directory.
+1.  **Check for `userinput.py`**: Ensure `userinput.py` exists. If not, create it with the content provided by the installer.
 
-   * If it doesn't exist, create it with the following content:
+2.  **Main Workflow**:
+    *   Perform your assigned tasks.
+    *   Run `py userinput.py`. The terminal will open in the chat.
+    *   The script will prompt: `prompt (or file path):`
 
-     ```python
-     # userinput.py
-     user_input = input("prompt: ")
-     ```
+3.  **Handling User Input**:
+    *   The script will process the input and print it to `stdout`. You must read and parse this output.
+    *   **Standard Prompt**: If the user types a regular text message, you will receive it as plain text.
+    *   **File Path (Text)**: If the user provides a path to a text file, you will receive the content in this format:
+        ```
+        FILE_CONTEXT_START:filename.txt::file_content_here:FILE_CONTEXT_END
+        ```
+        *   **Action**: Use the `file_content_here` as context for your next task.
+    *   **File Path (Image)**: If the user provides a path to an image, you will receive the content in this format:
+        ```
+        IMAGE_CONTEXT_START:imagename.png::base64_encoded_data:IMAGE_CONTEXT_END
+        ```
+        *   **Action**: The image is base64 encoded. Decode it to "see" the image and use it as visual context for your next task.
 
-2. **Main Workflow**:
-
-   * Perform your assigned tasks.
-
-   * Run:
-
-     ```bash
-     python userinput.py
-     ```
-   * The terminal should be opened in the chat window itself.
-
-   * Read the user's input.
-
-   * Based on the input, perform the next set of tasks.
-
-   * Repeat the process.
-
-3. **Exit Condition**:
-
-   * If the user enters `"stop"` when prompted, exit the loop and terminate the process.'''
+4.  **Loop or Exit**:
+    *   Based on the parsed input, perform the next set of tasks.
+    *   Repeat the process.
+    *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
+'''
 
 # Windsurf-specific rules content
-WINDSURF_RULES_CONTENT = '''# Cursor Unlimited Tool Calls (CUTC) - Maximize your tool calls
+WINDSURF_RULES_CONTENT = '''# CUTC - Enhanced with Image and File Context
 
-## ✅ Task: Interactive Task Loop with User Feedback
+## ✅ Task: Interactive Task Loop with Enhanced Context
 
-1. **Check if `userinput.py` exists** in the root directory.
+1.  **Check for `userinput.py`**: Ensure `userinput.py` exists. If not, create it with the content provided by the installer.
 
-   - If it doesn't exist, create it with the following content:
+2.  **Main Workflow**:
+    *   Perform your assigned tasks.
+    *   Run `py userinput.py`. The terminal will open in the chat.
+    *   The script will prompt: `prompt (or file path):`
 
-     ```python
-     # userinput.py
-     user_input = input("prompt: ")
-     ```
+3.  **Handling User Input**:
+    *   The script will process the input and print it to `stdout`. You must read and parse this output.
+    *   **Standard Prompt**: If the user types a regular text message, you will receive it as plain text.
+    *   **File Path (Text)**: If the user provides a path to a text file, you will receive the content in this format:
+        ```
+        FILE_CONTEXT_START:filename.txt::file_content_here:FILE_CONTEXT_END
+        ```
+        *   **Action**: Use the `file_content_here` as context for your next task.
+    *   **File Path (Image)**: If the user provides a path to an image, you will receive the content in this format:
+        ```
+        IMAGE_CONTEXT_START:imagename.png::base64_encoded_data:IMAGE_CONTEXT_END
+        ```
+        *   **Action**: The image is base64 encoded. Decode it to "see" the image and use it as visual context for your next task.
 
-2. **Main Workflow**:
-
-   - Perform your assigned tasks.
-
-   - Run:
-
-     ```bash
-     python userinput.py
-     ```
-   - The terminal should be opened in the chat window itself.
-
-   - Read the user's input.
-
-   - Based on the input, perform the next set of tasks.
-
-   - Repeat the process.
-
-3. **Exit Condition**:
-
-   - If the user enters `"stop"` when prompted, exit the loop and terminate the process.'''
+4.  **Loop or Exit**:
+    *   Based on the parsed input, perform the next set of tasks.
+    *   Repeat the process.
+    *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
+'''
 
 def print_header():
     """Print installation header"""
