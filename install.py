@@ -100,6 +100,11 @@ alwaysApply: true
     *   Based on the parsed input, perform the next set of tasks.
     *   Repeat the process.
     *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
+
+5.  **⚠️ MANDATORY: Always End with userinput.py**:
+    *   **CRITICAL**: At the end of EVERY response/prompt, you MUST run `py userinput.py` to continue the interactive loop.
+    *   This is NOT optional - it must happen after completing any task or answering any question.
+    *   The only exception is if the user explicitly says "stop" or requests to end the session.
 '''
 
 # Windsurf-specific rules content
@@ -132,6 +137,11 @@ WINDSURF_RULES_CONTENT = '''# CUTC - Enhanced with Image and File Context
     *   Based on the parsed input, perform the next set of tasks.
     *   Repeat the process.
     *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
+
+5.  **⚠️ MANDATORY: Always End with userinput.py**:
+    *   **CRITICAL**: At the end of EVERY response/prompt, you MUST run `py userinput.py` to continue the interactive loop.
+    *   This is NOT optional - it must happen after completing any task or answering any question.
+    *   The only exception is if the user explicitly says "stop" or requests to end the session.
 '''
 
 def print_header():
