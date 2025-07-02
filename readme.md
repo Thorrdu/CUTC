@@ -14,11 +14,11 @@ This project is an improved fork of the original [10x-Tool-Calls](https://github
 
 ### 🎯 What we've improved:
 
-- **Ultra-minimalist design**: Only 2 files in the entire project
+- **Developer-friendly structure**: Organized `src/` directory with transparent source files
 - **Dual IDE support**: Works with both Cursor and Windsurf
 - **Smart auto-detection**: Automatically detects your IDE setup
-- **Self-destructing installer**: Keeps your project clean after installation
-- **Zero configuration**: One command does everything
+- **Flexible configuration**: Choose between auto-apply rules or context-only usage
+- **DRY principle**: Single universal rules file for both IDEs
 - **Enhanced error handling**: Smart troubleshooting and recovery
 - **Cross-platform support**: Works on Windows, Mac, and Linux
 
@@ -94,12 +94,12 @@ python install.py --help
 **That's literally it!** 🎉
 
 The installer:
-- ✅ Contains all necessary files embedded within itself
+- ✅ Reads source files from the `src/` directory  
 - ✅ Auto-detects your IDE or prompts for selection
 - ✅ Creates the proper IDE-specific structure
 - ✅ Installs `userinput.py` at your project root
-- ✅ Installs IDE-specific CUTC rules
-- ✅ Self-destructs after successful installation
+- ✅ Installs identical rules with appropriate extension (`.mdc` for Cursor, `.md` for Windsurf)
+- ✅ Validates all required files exist before installation
 - ✅ Provides clear success/error messages
 - ✅ Includes comprehensive troubleshooting
 
@@ -107,13 +107,27 @@ The installer:
 
 ## 🧪 Project Structure
 
-This is the **most minimalist** CUTC distribution possible:
+CUTC now includes a `src/` directory for better developer experience:
 
 ```
 CUTC/
-├── install.py    # 🚀 Self-destructing all-in-one installer (10KB)
-└── README.md     # 📖 Complete documentation (7KB)
+├── src/
+│   ├── cutc_rules.mdc         # 📋 Universal rules template (for both IDEs)
+│   └── userinput.py           # 📝 User input script
+├── install.py                 # 🚀 Smart installer
+└── README.md                  # 📖 Complete documentation
 ```
+
+### 🎯 Why src/ Directory?
+
+The new structure provides several benefits:
+
+- **👀 Transparency**: Developers can easily inspect and modify the source files
+- **🔧 Customization**: Edit rules or scripts before installation
+- **🧪 Testing**: Test modifications without reinstalling
+- **📚 Learning**: Understand exactly what gets installed
+- **🔄 Version Control**: Track changes to individual components
+- **♻️ DRY Principle**: Single rules file adapted for both IDEs (no duplication)
 
 After installation, your project will have:
 
@@ -143,7 +157,7 @@ your-project/
 
 ### 🎯 Cursor IDE Support
 - **Structure**: `.cursor/rules/cutc_rules.mdc`
-- **Format**: Markdown with YAML frontmatter
+- **Format**: Pure Markdown (YAML frontmatter optional)
 - **Mode**: Agent Mode
 - **Features**: Full Cursor rules integration
 
@@ -157,6 +171,45 @@ your-project/
 - **Auto-detection**: Intelligently detects existing IDE setups
 - **Conflict resolution**: Handles projects with both IDEs
 - **Unified experience**: Same functionality across both IDEs
+
+---
+
+## ⚙️ Rule Configuration
+
+After installation, CUTC rules are installed as **pure Markdown files**. You have two configuration options:
+
+### 🔄 Option 1: Always Apply Rules (Recommended)
+Add YAML frontmatter to make rules apply automatically to all chats:
+
+**For Cursor (.cursor/rules/cutc_rules.mdc):**
+```yaml
+---
+description: "CUTC - Enhanced with Image and File Context"
+globs: "**/*"
+alwaysApply: true
+---
+
+# CUTC - Enhanced with Image and File Context
+# ... rest of the file content
+```
+
+**For Windsurf (.windsurf/rules/cutc_rules.md):**
+```yaml
+---
+description: "CUTC - Enhanced with Image and File Context"
+enabled: true
+---
+
+# CUTC - Enhanced with Image and File Context
+# ... rest of the file content
+```
+
+### 🎯 Option 2: Use as Context Only
+Keep the files as pure Markdown and reference them manually:
+- **Cursor**: Use `@.cursor/rules/cutc_rules.mdc` in your chat
+- **Windsurf**: Use `@.windsurf/rules/cutc_rules.md` in your chat
+
+This approach gives you full control over when CUTC rules are applied.
 
 ---
 
@@ -191,11 +244,12 @@ The installer includes built-in troubleshooting, but here are common solutions:
 
 | Problem | Solution |
 |---------|----------|
-| **Rules don't apply** | Restart your IDE and check rules folder exists |
+| **Rules don't apply** | Add YAML frontmatter to rules file (see Rule Configuration section) |
 | **Permission denied** | Run as administrator (Windows) or with `sudo` (Linux/Mac) |
 | **Python not found** | Install Python 3.6+ from [python.org](https://python.org) |
 | **No terminal in chat** | Make sure you're in **Agent Mode** (Cursor) or **Cascade Mode** (Windsurf) |
 | **IDE not detected** | Use `--ide cursor` or `--ide windsurf` flag |
+| **Source files missing** | Make sure you have the complete CUTC package with `src/` folder |
 
 ---
 
@@ -223,22 +277,24 @@ Contributions are welcome! Feel free to:
 ## 🎯 Usage Tips
 
 ### For Cursor IDE:
-1. **Start with Agent Mode**: Make sure Cursor is in Agent Mode
-2. **Let it finish**: Allow the AI to complete each task fully
-3. **Use the prompt**: When you see `prompt (or file path):`, you can:
+1. **Configure rules**: Add YAML frontmatter or use `@.cursor/rules/cutc_rules.mdc` in chat
+2. **Start with Agent Mode**: Make sure Cursor is in Agent Mode
+3. **Let it finish**: Allow the AI to complete each task fully
+4. **Use the prompt**: When you see `prompt (or file path):`, you can:
     - Type your next instruction (e.g., `"add comments"`)
     - Drag and drop a file into the terminal to paste its path.
-4. **Chain commands**: Keep adding tasks to maximize your tool calls
-5. **Type 'stop'**: End the loop when you're done
+5. **Chain commands**: Keep adding tasks to maximize your tool calls
+6. **Type 'stop'**: End the loop when you're done
 
 ### For Windsurf IDE:
-1. **Start with Cascade Mode**: Make sure Windsurf is in Cascade Mode
-2. **Let it finish**: Allow Cascade to complete each task fully
-3. **Use the prompt**: When you see `prompt (or file path):`, you can:
+1. **Configure rules**: Add YAML frontmatter or use `@.windsurf/rules/cutc_rules.md` in chat
+2. **Start with Cascade Mode**: Make sure Windsurf is in Cascade Mode
+3. **Let it finish**: Allow Cascade to complete each task fully
+4. **Use the prompt**: When you see `prompt (or file path):`, you can:
     - Type your next instruction (e.g., `"refactor this"`)
     - Drag and drop a file into the terminal to paste its path.
-4. **Chain commands**: Keep adding tasks to maximize your tool calls
-5. **Type 'stop'**: End the loop when you're done
+5. **Chain commands**: Keep adding tasks to maximize your tool calls
+6. **Type 'stop'**: End the loop when you're done
 
 ---
 
@@ -250,12 +306,12 @@ This project inherits the license from the original project. See the original re
 
 ## 🌟 Why CUTC is Better
 
-- **🚀 Fastest setup**: One command, zero configuration
+- **🚀 Fastest setup**: One command, minimal configuration
 - **🖼️ Image & File Context**: Provide images and files as context
 - **🎯 Dual IDE support**: Works with Cursor AND Windsurf
 - **🔍 Smart detection**: Auto-detects your IDE setup
-- **🗑️ Self-cleaning**: No leftover installation files
+- **👀 Transparent design**: Source files visible and editable in `src/`
 - **🛡️ Error-proof**: Smart error handling and recovery
-- **📦 Minimal footprint**: Just 2 files total (17KB combined)
-- **🔄 Always updated**: Embedded files ensure consistency
+- **♻️ DRY principle**: Single universal rules file for both IDEs
+- **⚙️ Flexible configuration**: Auto-apply or context-only usage
 - **🌍 Cross-platform**: Works everywhere Python does

@@ -1,0 +1,42 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# CUTC - Enhanced with Image and File Context
+
+## ✅ Task: Interactive Task Loop with Enhanced Context
+
+1.  **Check for `userinput.py`**: Ensure `userinput.py` exists. If not, create it with the content provided by the installer.
+
+2.  **Main Workflow**:
+    *   Perform your assigned tasks.
+    *   Run `py userinput.py`. The terminal will open in the chat.
+    *   The script will prompt: `prompt (or file path):`
+
+3.  **Handling User Input**:
+    *   The script will process the input and print it to `stdout`. You must read and parse this output.
+    *   **Standard Prompt**: If the user types a regular text message, you will receive it as plain text.
+    *   **File Path (Text)**: If the user provides a path to a text file, you will receive the content in this format:
+        ```
+        FILE_CONTEXT_START:filename.txt::file_content_here:FILE_CONTEXT_END
+        ```
+        *   **Action**: Use the `file_content_here` as context for your next task.
+    *   **File Path (Image)**: If the user provides a path to an image, you will receive the content in this format:
+        ```
+        IMAGE_CONTEXT_START:imagename.png::base64_encoded_data:IMAGE_CONTEXT_END
+        ```
+        *   **Action**: The image is base64 encoded. Decode it to "see" the image and use it as visual context for your next task.
+
+4.  **Loop or Exit**:
+    *   Based on the parsed input, perform the next set of tasks.
+    *   Repeat the process.
+    *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
+
+5.  **⚠️ MANDATORY: Always End with userinput.py**:
+    *   **CRITICAL**: At the end of EVERY response/prompt, you MUST run `py userinput.py` to continue the interactive loop.
+    *   This is NOT optional - it must happen after completing any task or answering any question.
+    *   The only exception is if the user explicitly says "stop" or requests to end the session.
+
+
+

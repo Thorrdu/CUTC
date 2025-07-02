@@ -17,132 +17,16 @@ import shutil
 from pathlib import Path
 import argparse
 
-# Embedded file contents
-USERINPUT_CONTENT = '''
-import os
-import base64
-from pathlib import Path
+def load_source_file(filename):
+    """Load content from src/ directory"""
+    src_path = Path("src") / filename
+    if not src_path.exists():
+        raise FileNotFoundError(f"Source file not found: {src_path}")
+    
+    with open(src_path, "r", encoding="utf-8") as f:
+        return f.read()
 
-# Define supported image and text extensions
-IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp']
-TEXT_EXTENSIONS = ['.txt', '.py', '.js', '.ts', '.md', '.html', '.css', '.json', '.xml', '.yaml', '.yml']
 
-def is_image_file(path):
-    return path.suffix.lower() in IMAGE_EXTENSIONS
-
-def is_text_file(path):
-    return path.suffix.lower() in TEXT_EXTENSIONS
-
-def process_input(user_input):
-    """Processes user input, handling file paths for images and text."""
-    try:
-        input_path = Path(user_input)
-        if input_path.is_file():
-            if is_image_file(input_path):
-                # It's an image, encode it in base64
-                with open(input_path, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                print(f"IMAGE_CONTEXT_START:{input_path.name}::{encoded_string}:IMAGE_CONTEXT_END")
-            elif is_text_file(input_path):
-                # It's a text file, print its content
-                with open(input_path, "r", encoding='utf-8', errors='ignore') as text_file:
-                    content = text_file.read()
-                print(f"FILE_CONTEXT_START:{input_path.name}::{content}:FILE_CONTEXT_END")
-            else:
-                # It's another type of file, treat as a text prompt
-                print(user_input)
-        else:
-            # It's not a valid file path, treat as a text prompt
-            print(user_input)
-    except Exception:
-        # Handle cases where input is not a valid path at all
-        print(user_input)
-
-if __name__ == "__main__":
-    prompt_text = input("prompt (or file path): ")
-    if prompt_text.lower() == 'stop':
-        print("stop")
-    else:
-        process_input(prompt_text)
-'''
-
-# Cursor-specific rules content
-CURSOR_RULES_CONTENT = '''---
-description: "CUTC - Enhanced with Image and File Context"
-globs: 
-alwaysApply: true
----
-
-### ✅ Task: Interactive Task Loop with Enhanced Context
-
-1.  **Check for `userinput.py`**: Ensure `userinput.py` exists. If not, create it with the content provided by the installer.
-
-2.  **Main Workflow**:
-    *   Perform your assigned tasks.
-    *   Run `py userinput.py`. The terminal will open in the chat.
-    *   The script will prompt: `prompt (or file path):`
-
-3.  **Handling User Input**:
-    *   The script will process the input and print it to `stdout`. You must read and parse this output.
-    *   **Standard Prompt**: If the user types a regular text message, you will receive it as plain text.
-    *   **File Path (Text)**: If the user provides a path to a text file, you will receive the content in this format:
-        ```
-        FILE_CONTEXT_START:filename.txt::file_content_here:FILE_CONTEXT_END
-        ```
-        *   **Action**: Use the `file_content_here` as context for your next task.
-    *   **File Path (Image)**: If the user provides a path to an image, you will receive the content in this format:
-        ```
-        IMAGE_CONTEXT_START:imagename.png::base64_encoded_data:IMAGE_CONTEXT_END
-        ```
-        *   **Action**: The image is base64 encoded. Decode it to "see" the image and use it as visual context for your next task.
-
-4.  **Loop or Exit**:
-    *   Based on the parsed input, perform the next set of tasks.
-    *   Repeat the process.
-    *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
-
-5.  **⚠️ MANDATORY: Always End with userinput.py**:
-    *   **CRITICAL**: At the end of EVERY response/prompt, you MUST run `py userinput.py` to continue the interactive loop.
-    *   This is NOT optional - it must happen after completing any task or answering any question.
-    *   The only exception is if the user explicitly says "stop" or requests to end the session.
-'''
-
-# Windsurf-specific rules content
-WINDSURF_RULES_CONTENT = '''# CUTC - Enhanced with Image and File Context
-
-## ✅ Task: Interactive Task Loop with Enhanced Context
-
-1.  **Check for `userinput.py`**: Ensure `userinput.py` exists. If not, create it with the content provided by the installer.
-
-2.  **Main Workflow**:
-    *   Perform your assigned tasks.
-    *   Run `py userinput.py`. The terminal will open in the chat.
-    *   The script will prompt: `prompt (or file path):`
-
-3.  **Handling User Input**:
-    *   The script will process the input and print it to `stdout`. You must read and parse this output.
-    *   **Standard Prompt**: If the user types a regular text message, you will receive it as plain text.
-    *   **File Path (Text)**: If the user provides a path to a text file, you will receive the content in this format:
-        ```
-        FILE_CONTEXT_START:filename.txt::file_content_here:FILE_CONTEXT_END
-        ```
-        *   **Action**: Use the `file_content_here` as context for your next task.
-    *   **File Path (Image)**: If the user provides a path to an image, you will receive the content in this format:
-        ```
-        IMAGE_CONTEXT_START:imagename.png::base64_encoded_data:IMAGE_CONTEXT_END
-        ```
-        *   **Action**: The image is base64 encoded. Decode it to "see" the image and use it as visual context for your next task.
-
-4.  **Loop or Exit**:
-    *   Based on the parsed input, perform the next set of tasks.
-    *   Repeat the process.
-    *   If the user enters `stop`, the script will output `stop`. Terminate the loop.
-
-5.  **⚠️ MANDATORY: Always End with userinput.py**:
-    *   **CRITICAL**: At the end of EVERY response/prompt, you MUST run `py userinput.py` to continue the interactive loop.
-    *   This is NOT optional - it must happen after completing any task or answering any question.
-    *   The only exception is if the user explicitly says "stop" or requests to end the session.
-'''
 
 def print_header():
     """Print installation header"""
@@ -165,6 +49,20 @@ def check_prerequisites():
     if not os.access(".", os.W_OK):
         print("❌ No write permissions in current directory")
         return False
+    
+    # Check if src/ directory exists
+    src_dir = Path("src")
+    if not src_dir.exists():
+        print("❌ Source directory 'src/' not found")
+        print("   Make sure you have the complete CUTC package with src/ folder")
+        return False
+    
+    # Check if required source files exist
+    required_files = ["userinput.py", "cutc_rules.mdc"]
+    for file in required_files:
+        if not (src_dir / file).exists():
+            print(f"❌ Required source file not found: src/{file}")
+            return False
     
     print("✅ Prerequisites check passed")
     return True
@@ -234,21 +132,27 @@ def install_files(ide, rules_dir=None):
     print(f"📝 Installing CUTC files for {ide.upper()}...")
     
     try:
+        # Load userinput.py content from src/
+        userinput_content = load_source_file("userinput.py")
+        
         # Install userinput.py at root (same for both IDEs)
         with open("userinput.py", "w", encoding="utf-8") as f:
-            f.write(USERINPUT_CONTENT)
+            f.write(userinput_content)
         print("✅ userinput.py installed at project root")
         
-        # Install IDE-specific rules file
+        # Load base rules content from src/
+        base_rules_content = load_source_file("cutc_rules.mdc")
+        
+        # Install IDE-specific rules file with appropriate extension
         if ide == "cursor":
             rules_file = rules_dir / "cutc_rules.mdc"
             with open(rules_file, "w", encoding="utf-8") as f:
-                f.write(CURSOR_RULES_CONTENT)
+                f.write(base_rules_content)
             print(f"✅ CUTC rules installed: {rules_file}")
         elif ide == "windsurf":
             rules_file = rules_dir / "cutc_rules.md"
             with open(rules_file, "w", encoding="utf-8") as f:
-                f.write(WINDSURF_RULES_CONTENT)
+                f.write(base_rules_content)
             print(f"✅ CUTC rules installed: {rules_file}")
         
         return True
@@ -274,19 +178,19 @@ def print_success_message(ide):
     if ide == "cursor":
         print("📋 Next Steps for Cursor IDE:")
         print("1. 🔄 Restart Cursor IDE")
-        print("2. ⚙️  Verify CUTC rules are active in settings")
+        print("2. ⚙️  Configure CUTC rules (see README for options)")
         print("3. 🤖 Switch to Agent Mode")
         print("4. 🚀 Start coding with unlimited tool calls!")
     elif ide == "windsurf":
         print("📋 Next Steps for Windsurf IDE:")
         print("1. 🔄 Restart Windsurf IDE")
-        print("2. ⚙️  Verify CUTC rules are active in Cascade settings")
+        print("2. ⚙️  Configure CUTC rules (see README for options)")
         print("3. 🤖 Switch to Cascade Mode")
         print("4. 🚀 Start coding with unlimited tool calls!")
     elif ide == "both":
         print("📋 Next Steps:")
         print("1. 🔄 Restart your IDE(s)")
-        print("2. ⚙️  Verify CUTC rules are active in settings")
+        print("2. ⚙️  Configure CUTC rules (see README for options)")
         print("3. 🤖 Switch to Agent/Cascade Mode")
         print("4. 🚀 Start coding with unlimited tool calls!")
     
